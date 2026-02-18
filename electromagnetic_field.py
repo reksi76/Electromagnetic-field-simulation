@@ -9,8 +9,8 @@ charges = [
 k = 1.0
 
 # Electric field
-x = np.linspace(-5, 5, 40)
-y = np.linspace(-5, 5, 40)
+x = np.linspace(-5, 5, 400)
+y = np.linspace(-5, 5, 400)
 X, Y = np.meshgrid(x, y)
 
 Ey = np.zeros_like(Y)
@@ -24,13 +24,11 @@ for charge in charges:
     dx = X - x0
     dy = Y - y0
 
-    r = np.sqrt(dx**2 + dy**2) + 1e-10
-   
-    r_min = 0.4
-    mask = r >= r_min
+    epsilon = 0.2
+    r = np.sqrt(dx**2 + dy**2 + epsilon**2)
 
-    Ex[mask] += k * q * dx[mask] / r[mask]**3
-    Ey[mask] += k * q * dy[mask] / r[mask]**3
+    Ex += k * q * dx / r**3
+    Ey += k * q * dy / r**3
 
 plt.figure(figsize=(6,4))
 plt.streamplot(X, Y, Ex, Ey)
@@ -57,12 +55,10 @@ for charge in charges:
     dx = X - x0
     dy = Y - y0
 
-    r = np.sqrt(dx**2 + dy**2) + 1e-5
+    epsilon = 0.2
+    r = np.sqrt(dx**2 + dy**2 + epsilon**2)
 
-    r_min = 0.5
-    mask = r >= r_min
-    
-    V_total[mask] += k * q / r[mask]
+    V_total += k * q / r
 
 plt.figure(figsize=(6,4))
 plt.contour(X, Y, V_total, cmap='inferno')
@@ -73,3 +69,56 @@ plt.figure(figsize=(6,4))
 plt.contourf(X, Y, V_total, cmap='inferno')
 plt.colorbar()
 plt.show()
+
+# Overly
+fig, ax = plt.subplots(figsize=(6,4))
+
+# streamplot
+ax.streamplot(X, Y, Ex, Ey, color='b', density=1.5)
+
+# Contourf
+cf = ax.contourf(X, Y, V_total, cmap='inferno', alpha=0.8)
+
+fig.colorbar(cf, ax=ax)
+plt.show()
+
+# Simulation
+dt = 0.01
+px, py = -4, 2 
+px_list = []
+py_list = []
+vx = 0.0
+vy = 0.0
+
+for t in range(5000):
+    ix = round(np.argmin(abs(x - px)))
+    iy = round(np.argmin(abs(y - py)))
+
+    Ex_local = Ex[ix][iy]
+    Ey_local = Ey[ix][iy]
+
+    q_test = 1.0 
+    m = 1.0
+
+    ax = Ex_local
+    ay = Ey_local
+
+    vx += ax * dt 
+    vy += ay * dt 
+
+    px += vx * dt 
+    py += vx * dt 
+
+    px_list.append(px)
+    py_list.append(py)
+
+
+
+
+    
+
+
+
+
+
+
