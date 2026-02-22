@@ -1,30 +1,24 @@
 import matplotlib.pyplot as plt 
 
-def vis_charges(charges):
+def vis_charges(ax, charges):
     for charge in charges:
         x0, y0 = charge['pos']
 
         if charge['q'] < 0:
-            plt.scatter(x0, y0, color='b', s=200)
+            ax.scatter(x0, y0, color='b', s=200)
         else:
-            plt.scatter(x0, y0, color='r', s=200)
+            ax.scatter(x0, y0, color='r', s=200)
 
-    
+def vis_electrical_field(ax, x, y, Ex, Ey):
+    ax.streamplot(x, y, Ex, Ey, color='blue')
 
-def vis_electrical_field(x, y, Ex, Ey):
-    plt.figure(figsize=(6,4))
-    plt.streamplot(Ex, Ey, x, y)
+def vis_potential(ax, X, Y, Ex, Ey, V_total):
+    ax.streamplot(X, Y, Ex, Ey,color='blue', density=1.5)
+    cf = ax.contourf(X, Y, V_total, cmap='inferno', alpha=0.8)
+    return cf 
 
-def vis_potential(X, Y, V_total):
-    fig, ax = plt.subplots(figsize=(6,4))
-
-    ax.streamplot(X, Y, Ex, Ey, density=1.5)
-    cf = conrourf(X, Y, V_total, cmap='inferno', alpha=0.8)
-    fig.colorbar(cf, ax=ax)
-
-def vis_particle_sim(px_list, py_list):
-    plt.figure(figsize=(10,4))
-    plt.plot(px_list, py_list)
+def vis_particle_sim(ax, px_list, py_list):
+    ax.plot(px_list, py_list)
 
 
 
