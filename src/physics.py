@@ -55,8 +55,8 @@ def electrical_potential(charges, k, X, Y):
 
     return V_total
 
-def particle_sim(x, y, Ex, Ey):
-    dt = 0.01
+def particle_sim(x, y, Ex, Ey, q):
+    dt = 0.02
     px, py = -4, 2 
     px_list = []
     py_list = []
@@ -70,12 +70,12 @@ def particle_sim(x, y, Ex, Ey):
         Ex_local = Ex[iy][ix]
         Ey_local = Ey[iy][ix]
         
-        k = 1.0
+        k = -1.0
         m = 1.0
 
         # F = q * E and a = F / m, if m = 1, a = F*E
-        ax = Ex_local
-        ay = Ey_local
+        ax = q * Ex_local
+        ay = q * Ey_local
 
         vx += ax * dt
         vy += ay * dt

@@ -20,7 +20,6 @@ charges = setup_charges()
 k, x, y, X, Y = setup_grid()
 Ex, Ey = electrical_field(charges, k, X, Y)
 V_total = electrical_potential(charges, k, X, Y)
-px_list, py_list = particle_sim(x, y, Ex, Ey)
 
 # Visualization
 # Electrical field
@@ -45,5 +44,10 @@ ax2.grid('True')
 fig2.colorbar(cf, ax=ax2)
 plt.show()
 
-
+px1, py1 = particle_sim(x, y, Ex, Ey, 1.0)
+px2, py2 = particle_sim(x, y, Ex, Ey, -1.0)
+fig, ax3 = plt.subplots(figsize=(6, 6))
+ani = vis_particle_sim(ax3, px1, px2, py1, py2)
+vis_charges(ax3, charges)
+plt.show()
 
