@@ -47,7 +47,7 @@ plt.show()
 px1, py1 = particle_sim(x, y, Ex, Ey, 1.0)
 px2, py2 = particle_sim(x, y, Ex, Ey, -1.0)
 fig, ax3 = plt.subplots(figsize=(6, 6))
-ani = vis_particle_sim(ax3, px1, px2, py1, py2)
+ani = vis_particle_sim(ax3, px1, py1, px2, py2)
 vis_charges(ax3, charges)
 plt.show()
 

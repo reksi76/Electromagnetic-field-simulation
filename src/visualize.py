@@ -18,18 +18,22 @@ def vis_potential(ax, X, Y, Ex, Ey, V_total):
     cf = ax.contourf(X, Y, V_total, cmap='inferno', alpha=0.8)
     return cf 
 
-def vis_particle_sim(ax, px1, px2, py1, py2):
+def vis_particle_sim(ax, px1, py1, px2, py2):
     fig = ax.figure
     ax.set_aspect('equal')
 
+    all_x = px1 + px2
+    all_y = py1 + py2
+    
+    xmin, xmax = min(all_x), max(all_x)
+    ymin, ymax = min(all_y), max(all_y)
 
-    xmin = min(px1+px2)
-    xmax = max(px1+px2)
-    ymin = min(py1+py2)
-    ymax = max(py1+py2)
+    x_center = (xmin + xmax)/2 
+    y_center = (ymin + ymax)/2 
+    max_range = max(xmax - xmin, ymax - ymin)
 
-    ax.set_xlim(xmin-1, xmax+1)
-    ax.set_ylim(ymin-1, ymax+1)
+    ax.set_xlim(x_center - max_range/2, x_center + max_range/2)
+    ax.set_ylim(y_center - max_range/2, y_center + max_range/2)
 
     dot1, = ax.plot([], [], 'o', color='orange')
     dot2, = ax.plot([], [], 'o', color='cyan')
@@ -44,7 +48,7 @@ def vis_particle_sim(ax, px1, px2, py1, py2):
             fig, 
             update, 
             frames = len(px1),
-            interval = 100
+            interval = 10
             )
     return ani
 
