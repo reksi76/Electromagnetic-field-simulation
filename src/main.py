@@ -44,10 +44,13 @@ ax2.grid('True')
 fig2.colorbar(cf, ax=ax2)
 plt.show()
 
+# particle_sim
 px1, py1 = particle_sim(x, y, Ex, Ey, 1.0)
 px2, py2 = particle_sim(x, y, Ex, Ey, -1.0)
 fig, ax3 = plt.subplots(figsize=(6, 6))
 ani = vis_particle_sim(ax3, px1, py1, px2, py2)
 vis_charges(ax3, charges)
+ax3.set_xlim(-5, 5)
+ax3.set_ylim(-5, 5)
 plt.show()
 

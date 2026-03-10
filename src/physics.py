@@ -63,42 +63,44 @@ def acceleration(px, py, q, x, y, Ex, Ey):
     
     ax = q * Ex_local 
     ay = q * Ey_local
+    return ax, ay
 
 def particle_sim(x, y, Ex, Ey, q):
-    dt = 0.02
+    dt = 0.01
     px, py = -4, 2 
     vx, vy = 0, 0
     px_list = []
     py_list = []
 
     # Runge-Kutta 4 (RK4) Numerical method
-    for t in range(5000):
+    for t in range(3000):
         # k1
-        ax1, ax2 = acceleration(px, py, x, y, Ex, Ey)
-        k1_vx, k1_vy = ax1 * dt, ax2 * dt
+        ax1, ay1 = acceleration(px, py, q, x, y, Ex, Ey)
+        k1_vx, k1_vy = ax1 * dt, ay1 * dt
         k1_px, k1_py = vx * dt, vy * dt
 
         # k2
-        ax2, ay2 = acceleration(px + 0.5 * k1_px, py + 0.5 * k1_py, x, y, Ex, Ey)
-        k2_vx, k2_vy = ax2 * dt, ax2 * dt
-        k2_px, k2_py = (v + 0.5 * k1_vx) * dt, (v+ 0.5 * k1_vy)
+        ax2, ay2 = acceleration(px + 0.5 * k1_px, py + 0.5 * k1_py, q, x, y, Ex, Ey)
+        k2_vx, k2_vy = ax2 * dt, ay2 * dt
+        k2_px, k2_py = (vx + 0.5 * k1_vx) * dt, (vy + 0.5 * k1_vy) * dt
 
         # k3
-        ax3, ax3 = acceleration(px + 0.5 * k2_px, py + 0.5 * k2_py, x, y, Ex, Ey)
-        k3_vx, k2_vy = ax3 * dt, ay3 * dt
-        k3_px, k3_py = (v + 0.5 * k2_vx) * dt, (v + 0.5 * k2_vy) * dt
+        ax3, ay3 = acceleration(px + 0.5 * k2_px, py + 0.5 * k2_py, q, x, y, Ex, Ey)
+        k3_vx, k3_vy = ax3 * dt, ay3 * dt
+        k3_px, k3_py = (vx + 0.5 * k2_vx) * dt, (vy + 0.5 * k2_vy) * dt
 
         # k4
-        ax4, ay4 = acceleration(px + k3_px, px + k3_py, x, y, Ex, Ey) 
+        ax4, ay4 = acceleration(px + k3_px, py + k3_py, q, x, y, Ex, Ey) 
         k4_vx, k4_vy = ax4 * dt, ay4 * dt
-        k4_px, k4_py = (v + k3_vx) * dt, (v+ k3_py)
+        k4_px, k4_py = (vx + k3_vx) * dt, (vy + k3_vy) * dt
 
         vx += 1/6 * (k1_vx + 2 * k2_vx + 2 * k3_vx + k4_vx)
         vy += 1/6 * (k1_vy + 2 * k2_vy + 2 * k3_vy + k4_vy)
         px += 1/6 * (k1_px + 2 * k2_px + 2 * k3_px + k4_px)
         py += 1/6 * (k1_py + 2 * k2_py + 2 * k3_py + k4_py)
-
-
+        
+        px_list.append(px)
+        py_list.append(py)
         
     return px_list, py_list
 

@@ -34,15 +34,22 @@ def vis_particle_sim(ax, px1, py1, px2, py2):
 
     ax.set_xlim(x_center - max_range/2, x_center + max_range/2)
     ax.set_ylim(y_center - max_range/2, y_center + max_range/2)
-
+    
+    # Particle position
     dot1, = ax.plot([], [], 'o', color='orange')
     dot2, = ax.plot([], [], 'o', color='cyan')
 
+    # Tranjectory trails
+    trail1, = ax.plot([], [], '-', color='orange', linewidth=1)
+    trail2, = ax.plot([], [], '-', color='cyan', linewidth=1)
 
     def update(frame):
         dot1.set_data(px1[frame], py1[frame])
         dot2.set_data(px2[frame], py2[frame])
-        return dot1, dot2 
+
+        trail1.set_data(px1[:frame], py1[:frame])
+        trail2.set_data(px2[:frame], py2[:frame])
+        return dot1, dot2, trail1, trail2 
 
     ani = FuncAnimation(
             fig, 
@@ -50,6 +57,8 @@ def vis_particle_sim(ax, px1, py1, px2, py2):
             frames = len(px1),
             interval = 10
             )
+    ani.save('../plots/particle_simulation.gif')
+
     return ani
 
     
