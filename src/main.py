@@ -6,51 +6,76 @@ from physics import (
         setup_grid,
         electrical_field,
         electrical_potential,
-        particle_sim
+        particle_sim,
+        particle_energy
         )
 from visualize import (
         vis_charges,
         vis_electrical_field,
         vis_potential, 
-        vis_particle_sim
+        vis_particle_sim,
+        vis_energy
         )
 
 # Physics function
 charges = setup_charges()
 k, x, y, X, Y = setup_grid()
-Ex, Ey = electrical_field(charges, k, X, Y)
-V_total = electrical_potential(charges, k, X, Y)
+Ex, Ey, epsilon = electrical_field(charges, k, X, Y)
+V_total = electrical_potential(epsilon, charges, k, X, Y)
+
+SHOW_FIELD = False
+SHOW_POTENTIAL = False
+SHOW_PARTICLE_SIM = False
+SHOW_ENERGY = True
 
 # Visualization
-# Electrical field
-fig1, ax1 = plt.subplots(figsize= (6,4))
-vis_electrical_field(ax1, x, y, Ex, Ey)
-vis_charges(ax1, charges)
-ax1.set_title('Electrical Field')
-ax1.set_xlabel('X')
-ax1.set_ylabel('Y')
-ax1.grid('True')
-plt.show()
+if SHOW_FIELD:
+    # Electrical field
+    fig, ax = plt.subplots(figsize= (6,4))
+    vis_electrical_field(ax, x, y, Ex, Ey)
+    vis_charges(ax, charges)
+    ax.set_title('Electrical Field')
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.grid(True)
 
 # Electrical potential
-fig2, ax2 = plt.subplots(figsize=(6,4))
+if SHOW_POTENTIAL:
+    fig, ax = plt.subplots(figsize=(6,4))
 
-cf = vis_potential(ax2, X, Y, Ex, Ey, V_total)
-vis_charges(ax2, charges)
-ax2.set_title('Electrical Potential')
-ax2.set_xlabel('X')
-ax2.set_ylabel('Y')
-ax2.grid('True')
-fig2.colorbar(cf, ax=ax2)
-plt.show()
+    cf = vis_potential(ax, X, Y, Ex, Ey, V_total)
+    vis_charges(ax, charges)
+    ax.set_title('Electrical Potential')
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.grid(True)
+    fig.colorbar(cf, ax=ax)
 
 # particle_sim
-px1, py1 = particle_sim(x, y, Ex, Ey, 1.0)
-px2, py2 = particle_sim(x, y, Ex, Ey, -1.0)
-fig, ax3 = plt.subplots(figsize=(6, 6))
-ani = vis_particle_sim(ax3, px1, py1, px2, py2)
-vis_charges(ax3, charges)
-ax3.set_xlim(-5, 5)
-ax3.set_ylim(-5, 5)
+px1, py1, vx_list1, vy_list1 = particle_sim(x, y, Ex, Ey, 1.0)
+px2, py2, vx_list2, vy_list2 = particle_sim(x, y, Ex, Ey, -1.0)
+
+if SHOW_PARTICLE_SIM: 
+    fig, ax = plt.subplots(figsize=(6, 6))
+    ani = vis_particle_sim(ax, px1, py1, px2, py2)
+    vis_charges(ax, charges)
+    ax.set_xlim(-5, 5)
+    ax.set_ylim(-5, 5)
+    ax.set_title(
+        r"Particle Motion in Electric Field: $ \vec{F}=q\vec{E}, \; \vec{a}=\frac{q\vec{E}}{m} $ (RK4 Integration)"
+    )
+
+if SHOW_ENERGY:
+    # Energy calculation
+    E1 = particle_energy(epsilon, charges, k, px1, py1, vx_list1, vy_list1, 1.0)
+    E2 = particle_energy(epsilon, charges, k, px2, py2, vx_list2, vy_list2, -1.0)
+
+    fig, ax = plt.subplots(figsize=(6,4))
+    vis_energy(ax, E1, E2)
+
 plt.show()
+
+
+
+
 

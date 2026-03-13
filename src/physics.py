@@ -37,9 +37,9 @@ def electrical_field(charges, k, X, Y):
         Ex += (k * q * dx) / r**3
         Ey += (k * q * dy) / r**3
 
-    return  Ex, Ey
+    return  Ex, Ey, epsilon
 
-def electrical_potential(charges, k, X, Y):
+def electrical_potential(epsilon, charges, k, X, Y):
     V_total = np.zeros_like(X)
 
     for charge in charges:
@@ -49,7 +49,6 @@ def electrical_potential(charges, k, X, Y):
         dx = X - x0
         dy = Y - y0
         
-        epsilon = 0.2
         r = np.sqrt(dx**2 + dy**2 + epsilon**2)
         V_total += k * q / r 
 
@@ -66,11 +65,13 @@ def acceleration(px, py, q, x, y, Ex, Ey):
     return ax, ay
 
 def particle_sim(x, y, Ex, Ey, q):
-    dt = 0.01
+    dt = 0.1
     px, py = -4, 2 
     vx, vy = 0, 0
     px_list = []
     py_list = []
+    vx_list = []
+    vy_list = []
 
     # Runge-Kutta 4 (RK4) Numerical method
     for t in range(3000):
@@ -101,9 +102,34 @@ def particle_sim(x, y, Ex, Ey, q):
         
         px_list.append(px)
         py_list.append(py)
+        vx_list.append(vx)
+        vy_list.append(vy)
         
-    return px_list, py_list
+    return px_list, py_list, vx_list, vy_list
 
+# Energy calculation (E = 1/2 * m * v^2 + q * V)
+def particle_energy(epsilon, charges, k, px_list, py_list, vx_list, vy_list, q):
+    energy_list = []
+
+    for px, py, vx, vy in zip(px_list, py_list, vx_list, vy_list):
+        RE = 0.5 * (vx**2 + vy**2)
+        V = 0 
+
+        for charge in charges:
+            q_source = charge['q']
+            x0, y0 = charge['pos']
+
+            dx = px - x0 
+            dy = py - y0
+
+            r = np.sqrt(dx**2 + dy**2 + epsilon**2)
+            V += (k * q_source)/r 
+
+        PE = q * V
+
+        energy_list.append(RE + PE)
+
+    return energy_list
 
 
 

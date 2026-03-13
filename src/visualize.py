@@ -57,8 +57,19 @@ def vis_particle_sim(ax, px1, py1, px2, py2):
             frames = len(px1),
             interval = 10
             )
-    ani.save('../plots/particle_simulation.gif')
+    # ani.save('../plots/particle_simulation.gif', writer='pillow', fps=40)
 
     return ani
+
+def vis_energy(ax, E1, E2):
+    ax.plot(E1, label='q = +1')
+    ax.plot(E2, label='q = -1')
+    ax.set_xlabel('Timestep')
+    ax.set_ylabel('Energy')
+    ax.set_title('Energy vs Time')
+
+    ax.legend()
+    ax.grid(True)
+
 
     
