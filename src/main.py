@@ -1,15 +1,17 @@
+import sys
+import os
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import matplotlib.pyplot as plt 
 import numpy as np 
 
-from physics import (
-        setup_charges, 
-        setup_grid,
-        electrical_field,
-        electrical_potential,
-        particle_sim,
-        particle_energy
-        )
-from visualize import (
+from physics.charges import setup_charges 
+from physics.fields import setup_grid, electric_field
+from physics.potential import  electrical_potential
+from simulation.particle_simulation import particle_sim
+
+from visualization.visualize import (
         vis_charges,
         vis_electrical_field,
         vis_potential, 
@@ -20,12 +22,12 @@ from visualize import (
 # Physics function
 charges = setup_charges()
 k, x, y, X, Y = setup_grid()
-Ex, Ey, epsilon = electrical_field(charges, k, X, Y)
+Ex, Ey, epsilon = electric_field(charges, k, X, Y)
 V_total = electrical_potential(epsilon, charges, k, X, Y)
 
 SHOW_FIELD = False
 SHOW_POTENTIAL = False
-SHOW_PARTICLE_SIM = False
+SHOW_PARTICLE_SIM = True
 SHOW_ENERGY = True
 
 # Visualization
@@ -67,11 +69,9 @@ if SHOW_PARTICLE_SIM:
 
 if SHOW_ENERGY:
     # Energy calculation
-    E1 = particle_energy(epsilon, charges, k, px1, py1, vx_list1, vy_list1, 1.0)
-    E2 = particle_energy(epsilon, charges, k, px2, py2, vx_list2, vy_list2, -1.0)
 
     fig, ax = plt.subplots(figsize=(6,4))
-    vis_energy(ax, E1, E2)
+    vis_energy(ax, energy_list1, energy_list2)
 
 plt.show()
 

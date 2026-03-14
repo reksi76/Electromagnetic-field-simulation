@@ -1,4 +1,5 @@
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.animation import FuncAnimation
 
 def vis_charges(ax, charges):
@@ -34,7 +35,7 @@ def vis_particle_sim(ax, px1, py1, px2, py2):
 
     ax.set_xlim(x_center - max_range/2, x_center + max_range/2)
     ax.set_ylim(y_center - max_range/2, y_center + max_range/2)
-    
+    frame_skip = 10
     # Particle position
     dot1, = ax.plot([], [], 'o', color='orange')
     dot2, = ax.plot([], [], 'o', color='cyan')
@@ -42,7 +43,8 @@ def vis_particle_sim(ax, px1, py1, px2, py2):
     # Tranjectory trails
     trail1, = ax.plot([], [], '-', color='orange', linewidth=1)
     trail2, = ax.plot([], [], '-', color='cyan', linewidth=1)
-
+    num_frames = 400
+    indices = np.linspace(0, len(px1) - 1, num_frames).astype(int)
     def update(frame):
         dot1.set_data(px1[frame], py1[frame])
         dot2.set_data(px2[frame], py2[frame])
@@ -54,7 +56,7 @@ def vis_particle_sim(ax, px1, py1, px2, py2):
     ani = FuncAnimation(
             fig, 
             update, 
-            frames = len(px1),
+            frames = indices, 
             interval = 10
             )
     # ani.save('../plots/particle_simulation.gif', writer='pillow', fps=40)
