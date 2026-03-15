@@ -3,10 +3,16 @@ import os
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from integrators.rk4 import rk4_step
+import numpy as np
+from integrators.methods import (
+        rk4_step, 
+        euiler_step
+        velocity_verlet_step
+        )
 from physics.force import acceleration
+from analysis.energy import compute_energy
 
-def particle_sim(x, y, Ex, Ey, q):
+def particle_sim(x, y, Ex, Ey, q, charges, k, epsilon):
     dt = 0.002
     px, py = -4, 2 
     vx, vy = 0, 0
@@ -29,4 +35,8 @@ def particle_sim(x, y, Ex, Ey, q):
         vx_list[t] = vx 
         vy_list[t] = vy 
 
-    return px_list, py_list, vx_list, vy_list
+        energy_list[t] = compute_energy(
+                px, py, vx, vy, q, charges, k, epsilon
+                )
+
+    return px_list, py_list, vx_list, vy_list, energy_list

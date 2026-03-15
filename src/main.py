@@ -54,12 +54,12 @@ if SHOW_POTENTIAL:
     fig.colorbar(cf, ax=ax)
 
 # particle_sim
-px1, py1, vx_list1, vy_list1 = particle_sim(x, y, Ex, Ey, 1.0)
-px2, py2, vx_list2, vy_list2 = particle_sim(x, y, Ex, Ey, -1.0)
+px_list1, py_list1, vx_list1, vy_list1, energy_list1 = particle_sim(x, y, Ex, Ey, 1.0, charges, k, epsilon)
+px_list2, py_list2, vx_list2, vy_list2, energy_list2 = particle_sim(x, y, Ex, Ey, -1.0, charges, k, epsilon)
 
 if SHOW_PARTICLE_SIM: 
     fig, ax = plt.subplots(figsize=(6, 6))
-    ani = vis_particle_sim(ax, px1, py1, px2, py2)
+    ani = vis_particle_sim(ax, px_list1, py_list1, px_list2, py_list2)
     vis_charges(ax, charges)
     ax.set_xlim(-5, 5)
     ax.set_ylim(-5, 5)
