@@ -1,4 +1,4 @@
-import numpy as np 
+# Integrators for the particle simulation
 
 def euler_step(px, py, vx, vy, dt, acceleration):
     ax, ay = acceleration(px, py)
@@ -9,7 +9,7 @@ def euler_step(px, py, vx, vy, dt, acceleration):
     px_new = px + vx * dt
     py_new = py + vy * dt
 
-    return vx_new, vy_new. px_new, py_new
+    return px_new, py_new, vx_new, vy_new
 
 def rk4_step(px, py, vx, vy, dt, accel_func):
     # K1
@@ -43,14 +43,16 @@ def velocity_verlet_step(px, py, vx, vy, dt, acceleration):
     ax, ay = acceleration(px, py)
 
     px_new = px + vx * dt + 0.5 * ax * dt**2 
-    py_new = px + vx * dt + 0.5 * ay * dt**2
+    py_new = py + vy * dt + 0.5 * ay * dt**2
 
     ax_new, ay_new = acceleration(px_new, py_new)
 
     vx_new = vx + 0.5 * (ax + ax_new) * dt
     vy_new = vy + 0.5 * (ay + ay_new) * dt
+    
+    # print (px_new, py_new, vx_new, vy_new)
 
-    returm px_new, py_new, vx_new, vy_new
+    return px_new, py_new, vx_new, vy_new
 
 
 

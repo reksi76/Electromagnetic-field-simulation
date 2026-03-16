@@ -3,7 +3,7 @@ import numpy  as np
 # Energy calculation (E = 1/2 * m * v^2 + q * V)
 def compute_energy(px, py, vx, vy, q, charges, k, epsilon):
     
-    # Kinwtic energy 
+    # Kinetic energy 
     KE = 0.5 * (vx**2 + vy**2)
 
 
@@ -25,7 +25,14 @@ def compute_energy(px, py, vx, vy, q, charges, k, epsilon):
 
     return KE + PE
 
+def energy_error(energy_list):
 
+    E0 = energy_list[0]
+    energy_list = np.array(energy_list)
+
+    error = (energy_list - E0) / E0
+
+    return error
 
 
 
