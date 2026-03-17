@@ -1,12 +1,12 @@
 import numpy as np
 
-def acceleration(px, py, q, x, y, Ex, Ey):
+def acceleration(state, field, grid, q):
 
-    ix = np.argmin(abs(x - px))
-    iy = np.argmin(abs(y - py))
+    ix = np.argmin(abs(grid.x - state.px))
+    iy = np.argmin(abs(grid.y - state.py))
 
-    Ex_local = Ex[iy][ix]
-    Ey_local = Ey[iy][ix]
+    Ex_local = field.Ex[iy, ix]
+    Ey_local = field.Ey[iy, ix]
 
     ax = q * Ex_local
     ay = q * Ey_local

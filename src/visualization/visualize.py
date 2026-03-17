@@ -11,20 +11,20 @@ def vis_charges(ax, charges):
         else:
             ax.scatter(x0, y0, color='r', s=200)
 
-def vis_electrical_field(ax, x, y, Ex, Ey):
-    ax.streamplot(x, y, Ex, Ey, color='blue')
+def vis_electrical_field(ax, grid, field):
+    ax.streamplot(grid.x, grid.y, field.Ex, field.Ey, color='blue')
 
-def vis_potential(ax, X, Y, Ex, Ey, V_total):
-    ax.streamplot(X, Y, Ex, Ey,color='blue', density=1.5)
-    cf = ax.contourf(X, Y, V_total, cmap='inferno', alpha=0.8)
+def vis_potential(ax, grid, field, V_total):
+    ax.streamplot(grid.X, grid.Y, grid.Ex, grid.Ey, color='blue', density=1.5)
+    cf = ax.contourf(grid.X, grid.Y, V_total, cmap='inferno', alpha=0.8)
     return cf 
 
-def vis_particle_sim(ax, px1, py1, px2, py2):
+def vis_particle_sim(ax, new_state):
     fig = ax.figure
     ax.set_aspect('equal')
 
-    all_x = px1 + px2
-    all_y = py1 + py2
+    all_x = new_state.px1 + new_state.px2
+    all_y = new_state.py1 + new_state.py2
     
     xmin, xmax = min(all_x), max(all_x)
     ymin, ymax = min(all_y), max(all_y)
@@ -46,11 +46,11 @@ def vis_particle_sim(ax, px1, py1, px2, py2):
     num_frames = 400
     indices = np.linspace(0, len(px1) - 1, num_frames).astype(int)
     def update(frame):
-        dot1.set_data(px1[frame], py1[frame])
-        dot2.set_data(px2[frame], py2[frame])
+        dot1.set_data(new_state.px1[frame], new_state.py1[frame])
+        dot2.set_data(new_state.px2[frame], new_state.py2[frame])
 
-        trail1.set_data(px1[:frame], py1[:frame])
-        trail2.set_data(px2[:frame], py2[:frame])
+        trail1.set_data(new_state.px1[:frame], new_state.py1[:frame])
+        trail2.set_data(new_state.px2[:frame], new_state.py2[:frame])
         return dot1, dot2, trail1, trail2 
 
     ani = FuncAnimation(

@@ -7,8 +7,10 @@ import matplotlib.pyplot as plt
 import numpy as np 
 
 from physics.charges import setup_charges 
-from physics.fields import setup_grid, electric_field
+from physics.fields import electric_field
 from physics.potential import  electrical_potential
+from physics.grid import setup_grid
+from physics.state import ParticleState, Trajectory
 from simulation.particle_simulation import particle_sim
 from analysis.energy import energy_error
 
@@ -27,11 +29,26 @@ integrators = {
         'Velocity Verlet': velocity_verlet_step
         }
 particle_charges = [1.0, -1.0]
+
 # Physics function
+
+# grid:
+# grid.x, grid.y, grid.X, grid.Y 
+
+# field:
+# field.Ex, field.Ey, field.epsilon
+
+k = 1 
 charges = setup_charges()
-k, x, y, X, Y = setup_grid()
-Ex, Ey, epsilon = electric_field(charges, k, X, Y)
-V_total = electrical_potential(epsilon, charges, k, X, Y)
+grid = setup_grid()
+field = electric_field(charges, k, grid)
+V_total = electrical_potential(field.epsilon, charges, k, grid.X, grid.Y)
+state = ParticleState(
+        px = -4,
+        py = 2,
+        vx = 0, 
+        vy = 0
+        )
 
 SHOW_FIELD = False
 SHOW_POTENTIAL = False
@@ -42,7 +59,7 @@ SHOW_ENERGY = True
 if SHOW_FIELD:
     # Electrical field
     fig, ax = plt.subplots(figsize= (6,4))
-    vis_electrical_field(ax, x, y, Ex, Ey)
+    vis_electrical_field(ax, grid, field)
     vis_charges(ax, charges)
     ax.set_title('Electrical Field')
     ax.set_xlabel('X')
@@ -53,7 +70,7 @@ if SHOW_FIELD:
 if SHOW_POTENTIAL:
     fig, ax = plt.subplots(figsize=(6,4))
 
-    cf = vis_potential(ax, X, Y, Ex, Ey, V_total)
+    cf = vis_potential(ax, grid, field, V_total)
     vis_charges(ax, charges)
     ax.set_title('Electrical Potential')
     ax.set_xlabel('X')
@@ -67,21 +84,27 @@ for name, method in integrators.items():
     particle_result = []
 
     for q in particle_charges:
-        sim = particle_sim(method, x, y, Ex, Ey, q, charges,k, epsilon)
+        sim = particle_sim(method, state, field, grid, q) # return traj dataclass
         particle_result.append(sim)
-    result[name]= particle_result
+    results[name]= particle_result
 
-e_px1, e_py1, e_vx1, e_vy1, e_energy1 = results["Euler"][0]
-e_px2, e_py2, e_vx2, e_vy2, e_energy2 = results["Euler"][1]
-k_px1, k_py1, k_vx1, k_vy1, k_energy1 = results["RK4"][0]
-k_px2, k_py2, k_vx2, k_vy2, k_energy2 = results["RK4"][1]
-v_px1, v_py1, v_vx1, v_vy1, v_energy1 = results["Velocity Verlet"][0]
-v_px2, v_py2, v_vx2, v_vy2, v_energy2 = results["Velocity Verlet"][1]
+# traj:
+# traj.px_list, traj.py_list, traj.vx_list, traj.vy_list, traj.energy_list
 
+euler1, euler2 = results["Euler"]
+rk4_1, rk4_2 = results["RK4"]
+verlet1, verlet2 = results["Velocity Verlet"]
 
 if SHOW_PARTICLE_SIM: 
     fig, ax = plt.subplots(figsize=(6, 6))
-    ani = vis_particle_sim(ax, e_px1, e_py1, e_px2, e_py2)
+    ani = vis_particle_sim(
+            ax, 
+            euler1.px_list, 
+            euler1.py_list, 
+            euler2.px_list, 
+            euler2.py_list
+            )
+
     vis_charges(ax, charges)
     ax.set_xlim(-5, 5)
     ax.set_ylim(-5, 5)
@@ -93,7 +116,7 @@ if SHOW_ENERGY:
     # Energy calculation
 
     fig, ax = plt.subplots(figsize=(6,4))
-    vis_energy(ax, e_energy1, e_energy2)
+    vis_energy(ax, euler1.energy_list, euler2.energy_list)
 plt.show()
 
 
