@@ -10,9 +10,8 @@ class ParticleState:
 
 @dataclass
 class Trajectory:
-    px: np.ndarray
-    py: np.ndarray
-    vx: np.ndarray
-    vy: np.ndarray
-    energy: np.ndarray
+    px_list: np.ndarray
+    py_list: np.ndarray
+    vx_list: np.ndarray
+    vy_list: np.ndarray
 

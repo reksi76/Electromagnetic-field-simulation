@@ -19,12 +19,12 @@ def vis_potential(ax, grid, field, V_total):
     cf = ax.contourf(grid.X, grid.Y, V_total, cmap='inferno', alpha=0.8)
     return cf 
 
-def vis_particle_sim(ax, new_state):
+def vis_particle_sim(ax, traj1, traj2):
     fig = ax.figure
     ax.set_aspect('equal')
 
-    all_x = new_state.px1 + new_state.px2
-    all_y = new_state.py1 + new_state.py2
+    all_x = np.concatenate([traj1.px_list, traj2.px_list])
+    all_y = np.concatenate([traj1.py_list, traj2.py_list])
     
     xmin, xmax = min(all_x), max(all_x)
     ymin, ymax = min(all_y), max(all_y)
@@ -44,13 +44,13 @@ def vis_particle_sim(ax, new_state):
     trail1, = ax.plot([], [], '-', color='orange', linewidth=1)
     trail2, = ax.plot([], [], '-', color='cyan', linewidth=1)
     num_frames = 400
-    indices = np.linspace(0, len(px1) - 1, num_frames).astype(int)
+    indices = np.linspace(0, len(traj1.px_list) - 1, num_frames).astype(int)
     def update(frame):
-        dot1.set_data(new_state.px1[frame], new_state.py1[frame])
-        dot2.set_data(new_state.px2[frame], new_state.py2[frame])
+        dot1.set_data(traj1.px_list[frame], traj1.py_list[frame])
+        dot2.set_data(traj2.px_list[frame], traj2.py_list[frame])
 
-        trail1.set_data(new_state.px1[:frame], new_state.py1[:frame])
-        trail2.set_data(new_state.px2[:frame], new_state.py2[:frame])
+        trail1.set_data(traj1.px_list[:frame], traj1.py_list[:frame])
+        trail2.set_data(traj2.px_list[:frame], traj2.py_list[:frame])
         return dot1, dot2, trail1, trail2 
 
     ani = FuncAnimation(

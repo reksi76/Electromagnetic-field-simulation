@@ -5,14 +5,16 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 import matplotlib.pyplot as plt 
 import numpy as np 
+from dataclasses import replace
 
 from physics.charges import setup_charges 
 from physics.fields import electric_field
 from physics.potential import  electrical_potential
 from physics.grid import setup_grid
-from physics.state import ParticleState, Trajectory
+from simulation.state import ParticleState, Trajectory
 from simulation.particle_simulation import particle_sim
-from analysis.energy import energy_error
+from analysis.energy import compute_energy, energy_error
+from integrators.methods import euler_step, rk4_step, velocity_verlet_step
 
 from visualization.visualize import (
         vis_charges,
@@ -42,10 +44,10 @@ k = 1
 charges = setup_charges()
 grid = setup_grid()
 field = electric_field(charges, k, grid)
-V_total = electrical_potential(field.epsilon, charges, k, grid.X, grid.Y)
+V_total = electrical_potential(field, charges, k, grid)
 state = ParticleState(
-        px = -4,
-        py = 2,
+        x = -4,
+        y = 2,
         vx = 0, 
         vy = 0
         )
@@ -82,9 +84,8 @@ if SHOW_POTENTIAL:
 results = {}
 for name, method in integrators.items():
     particle_result = []
-
     for q in particle_charges:
-        sim = particle_sim(method, state, field, grid, q) # return traj dataclass
+        sim = particle_sim(method, replace(state), field, grid, q) # return traj dataclass
         particle_result.append(sim)
     results[name]= particle_result
 
@@ -97,13 +98,7 @@ verlet1, verlet2 = results["Velocity Verlet"]
 
 if SHOW_PARTICLE_SIM: 
     fig, ax = plt.subplots(figsize=(6, 6))
-    ani = vis_particle_sim(
-            ax, 
-            euler1.px_list, 
-            euler1.py_list, 
-            euler2.px_list, 
-            euler2.py_list
-            )
+    ani = vis_particle_sim(ax, euler1, euler2)
 
     vis_charges(ax, charges)
     ax.set_xlim(-5, 5)
@@ -115,8 +110,11 @@ if SHOW_PARTICLE_SIM:
 if SHOW_ENERGY:
     # Energy calculation
 
+    energy1 = compute_energy(euler1, field, 1, charges, k)
+    energy2 = compute_energy(euler2, field, -1, charges, k)
+
     fig, ax = plt.subplots(figsize=(6,4))
-    vis_energy(ax, euler1.energy_list, euler2.energy_list)
+    vis_energy(ax, energy1, energy2)
 plt.show()
 
 
