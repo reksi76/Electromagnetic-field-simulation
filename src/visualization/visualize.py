@@ -15,16 +15,16 @@ def vis_electrical_field(ax, grid, field):
     ax.streamplot(grid.x, grid.y, field.Ex, field.Ey, color='blue')
 
 def vis_potential(ax, grid, field, V_total):
-    ax.streamplot(grid.X, grid.Y, grid.Ex, grid.Ey, color='blue', density=1.5)
+    ax.streamplot(grid.X, grid.Y, field.Ex, field.Ey, color='blue', density=1.5)
     cf = ax.contourf(grid.X, grid.Y, V_total, cmap='inferno', alpha=0.8)
     return cf 
 
-def vis_particle_sim(ax, traj1, traj2):
+def vis_particle_sim(ax, trajectories):
     fig = ax.figure
     ax.set_aspect('equal')
 
-    all_x = np.concatenate([traj1.px_list, traj2.px_list])
-    all_y = np.concatenate([traj1.py_list, traj2.py_list])
+    all_x = np.concatenate([traj.px_list for traj in trajectories.values()])
+    all_y = np.concatenate([traj.py_list for traj in trajectories.values()])
     
     xmin, xmax = min(all_x), max(all_x)
     ymin, ymax = min(all_y), max(all_y)
@@ -36,22 +36,27 @@ def vis_particle_sim(ax, traj1, traj2):
     ax.set_xlim(x_center - max_range/2, x_center + max_range/2)
     ax.set_ylim(y_center - max_range/2, y_center + max_range/2)
     frame_skip = 10
-    # Particle position
-    dot1, = ax.plot([], [], 'o', color='orange')
-    dot2, = ax.plot([], [], 'o', color='cyan')
+    
+    dots = [] 
+    trails = []
+    colors = ['orange', 'cyan', 'green', 'red', 'purple']
 
-    # Tranjectory trails
-    trail1, = ax.plot([], [], '-', color='orange', linewidth=1)
-    trail2, = ax.plot([], [], '-', color='cyan', linewidth=1)
+    for i, (name, traj) in enumerate(trajectories.items()):
+        dot, = ax.plot([], [], 'o', color= colors[i], label=name)
+        trail, = ax.plot([], [], '-', color=colors[i], label=name)
+        dots.append(dot)
+        trails.append(trail)
+    ax.legend()
+
+    
     num_frames = 400
-    indices = np.linspace(0, len(traj1.px_list) - 1, num_frames).astype(int)
+    indices = np.linspace(0, len(traj.px_list) - 1, num_frames).astype(int)
     def update(frame):
-        dot1.set_data(traj1.px_list[frame], traj1.py_list[frame])
-        dot2.set_data(traj2.px_list[frame], traj2.py_list[frame])
+        for i, traj in enumerate(trajectories.values()):
+            dots[i].set_data(traj.px_list[frame], traj.py_list[frame])
+            trail[i].set_data(traj.px_list[frame, traj.py_list[frame]])
 
-        trail1.set_data(traj1.px_list[:frame], traj1.py_list[:frame])
-        trail2.set_data(traj2.px_list[:frame], traj2.py_list[:frame])
-        return dot1, dot2, trail1, trail2 
+        return dots + trails 
 
     ani = FuncAnimation(
             fig, 
@@ -63,15 +68,20 @@ def vis_particle_sim(ax, traj1, traj2):
 
     return ani
 
-def vis_energy(ax, E1, E2):
-    ax.plot(E1, label='q = +1')
-    ax.plot(E2, label='q = -1')
-    ax.set_xlabel('Timestep')
+def vis_energy(ax, energy, label):
+    ax.plot(energy, label=f'{label}Integrator Energy')
+    ax.set_xlabel('Time step')
     ax.set_ylabel('Energy')
     ax.set_title('Energy vs Time')
-
     ax.legend()
     ax.grid(True)
 
+def vis_energy_error(ax, error, label):
+    ax.plot(error, label=f'{label} Error')
+    ax.set_title('Energy Error')
+    ax.set_xlabel("Time step")
+    ax.set_ylabel("Relative Energy Error")
+    ax.legend()
+    ax.grid(True)
 
     

@@ -32,6 +32,8 @@ def compute_energy(traj, field, q, charges, k):
 def energy_error(energy_list):
 
     E0 = energy_list[0]
+    if abs(E0) < 1e-12:
+        return np.zeros_like(energy_list)
     energy_list = np.array(energy_list)
 
     error = (energy_list - E0) / E0

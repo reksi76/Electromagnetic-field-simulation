@@ -21,7 +21,8 @@ from visualization.visualize import (
         vis_electrical_field,
         vis_potential, 
         vis_particle_sim,
-        vis_energy
+        vis_energy,
+        vis_energy_error
         )
 
 
@@ -30,7 +31,6 @@ integrators = {
         'RK4': rk4_step,
         'Velocity Verlet': velocity_verlet_step
         }
-particle_charges = [1.0, -1.0]
 
 # Physics function
 
@@ -39,7 +39,7 @@ particle_charges = [1.0, -1.0]
 
 # field:
 # field.Ex, field.Ey, field.epsilon
-
+q = 1.0
 k = 1 
 charges = setup_charges()
 grid = setup_grid()
@@ -52,10 +52,11 @@ state = ParticleState(
         vy = 0
         )
 
-SHOW_FIELD = False
-SHOW_POTENTIAL = False
+SHOW_FIELD = False 
+SHOW_POTENTIAL = False 
 SHOW_PARTICLE_SIM = True
 SHOW_ENERGY = True
+SHOW_ENERGY_ERROR = True
 
 # Visualization
 if SHOW_FIELD:
@@ -80,25 +81,21 @@ if SHOW_POTENTIAL:
     ax.grid(True)
     fig.colorbar(cf, ax=ax)
 
-# particle_sim
-results = {}
-for name, method in integrators.items():
-    particle_result = []
-    for q in particle_charges:
-        sim = particle_sim(method, replace(state), field, grid, q) # return traj dataclass
-        particle_result.append(sim)
-    results[name]= particle_result
-
-# traj:
-# traj.px_list, traj.py_list, traj.vx_list, traj.vy_list, traj.energy_list
-
-euler1, euler2 = results["Euler"]
-rk4_1, rk4_2 = results["RK4"]
-verlet1, verlet2 = results["Velocity Verlet"]
-
 if SHOW_PARTICLE_SIM: 
+    # particle_sim
+    results = {}
+    for name, method in integrators.items():
+        particle_result = []
+        sim = particle_sim(method, replace(state), field, grid, q) # return traj dataclass
+
+        results[name]= sim
+
+    # traj:
+    # traj.px_list, traj.py_list, traj.vx_list, traj.vy_list, traj.energy_list
+    
+    # Visualization
     fig, ax = plt.subplots(figsize=(6, 6))
-    ani = vis_particle_sim(ax, euler1, euler2)
+    ani = vis_particle_sim(ax, results)
 
     vis_charges(ax, charges)
     ax.set_xlim(-5, 5)
@@ -107,17 +104,27 @@ if SHOW_PARTICLE_SIM:
         r"Particle Motion in Electric Field: $ \vec{F}=q\vec{E}, \; \vec{a}=\frac{q\vec{E}}{m} $ (RK4 Integration)"
     )
 
+euler_energy = compute_energy(results['Euler'], field, q, charges, k)
+rk4_energy = compute_energy(results['RK4'], field, q, charges, k)
+velocity_verlet_energy = compute_energy(results['Velocity Verlet'], field, q, charges, k)
+
 if SHOW_ENERGY:
     # Energy calculation
-
-    energy1 = compute_energy(euler1, field, 1, charges, k)
-    energy2 = compute_energy(euler2, field, -1, charges, k)
-
     fig, ax = plt.subplots(figsize=(6,4))
-    vis_energy(ax, energy1, energy2)
+    vis_energy(ax, euler_energy, label='Euler')
+    vis_energy(ax, rk4_energy, label='RK4')
+    vis_energy(ax, velocity_verlet_energy, label='Velocity Verlet ')
+
+    
+# Energy energy_error
+if SHOW_ENERGY_ERROR:
+    fig, ax = plt.subplots(figsize=(6,4))
+    euler_error = energy_error(euler_energy)
+    rk4_error = energy_error(rk4_energy)
+    velocity_verlet_error = energy_error(velocity_verlet_energy)
+    vis_energy_error(ax, euler_error, label='Euler')
+    vis_energy_error(ax, rk4_error, label='RK4')
+    vis_energy_error(ax, velocity_verlet_error, label='Velocity Verlet')
+
 plt.show()
-
-
-
-
 
