@@ -14,7 +14,7 @@ from physics.force import acceleration
 
 def particle_sim(step_function, state, field, grid, q):
     dt = 0.002
-    N = 7000
+    N = 10000
 
     traj = Trajectory(
             px_list = np.zeros(N),
@@ -24,7 +24,7 @@ def particle_sim(step_function, state, field, grid, q):
             )
     
     def accel(x, y):  
-        return acceleration(state, field, grid, q)
+        return acceleration(state, field, grid, q, field_mode='Electromagnetic')
 
     for t in range(N):
         

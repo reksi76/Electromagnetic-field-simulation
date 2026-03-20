@@ -8,8 +8,10 @@ def vis_charges(ax, charges):
 
         if charge['q'] < 0:
             ax.scatter(x0, y0, color='b', s=200)
+            ax.text(x0, y0, '+', color='white', ha='center', va='center', fontsize=14, weight='bold')
         else:
             ax.scatter(x0, y0, color='r', s=200)
+            ax.text(x0, y0, '-', color='white', ha='center', va='center', fontsize=14, weight='bold')
 
 def vis_electrical_field(ax, grid, field):
     ax.streamplot(grid.x, grid.y, field.Ex, field.Ey, color='blue')
@@ -54,7 +56,7 @@ def vis_particle_sim(ax, trajectories):
     def update(frame):
         for i, traj in enumerate(trajectories.values()):
             dots[i].set_data(traj.px_list[frame], traj.py_list[frame])
-            trail[i].set_data(traj.px_list[frame, traj.py_list[frame]])
+            trails[i].set_data(traj.px_list[frame], traj.py_list[frame])
 
         return dots + trails 
 

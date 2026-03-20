@@ -48,15 +48,15 @@ V_total = electrical_potential(field, charges, k, grid)
 state = ParticleState(
         x = -4,
         y = 2,
-        vx = 0, 
+        vx = 1.0, 
         vy = 0
         )
 
 SHOW_FIELD = False 
 SHOW_POTENTIAL = False 
 SHOW_PARTICLE_SIM = True
-SHOW_ENERGY = True
-SHOW_ENERGY_ERROR = True
+SHOW_ENERGY = False
+SHOW_ENERGY_ERROR = False
 
 # Visualization
 if SHOW_FIELD:
@@ -87,10 +87,9 @@ if SHOW_PARTICLE_SIM:
     for name, method in integrators.items():
         particle_result = []
         sim = particle_sim(method, replace(state), field, grid, q) # return traj dataclass
-
         results[name]= sim
-
-    # traj:
+      
+      # traj:
     # traj.px_list, traj.py_list, traj.vx_list, traj.vy_list, traj.energy_list
     
     # Visualization
@@ -101,7 +100,7 @@ if SHOW_PARTICLE_SIM:
     ax.set_xlim(-5, 5)
     ax.set_ylim(-5, 5)
     ax.set_title(
-        r"Particle Motion in Electric Field: $ \vec{F}=q\vec{E}, \; \vec{a}=\frac{q\vec{E}}{m} $ (RK4 Integration)"
+        r"Particle Motion in Electric Field: $ \vec{F}=q\vec{E}, \; \vec{a}=\frac{q\vec{E}}{m} $)"
     )
 
 euler_energy = compute_energy(results['Euler'], field, q, charges, k)
@@ -125,6 +124,7 @@ if SHOW_ENERGY_ERROR:
     vis_energy_error(ax, euler_error, label='Euler')
     vis_energy_error(ax, rk4_error, label='RK4')
     vis_energy_error(ax, velocity_verlet_error, label='Velocity Verlet')
+
 
 plt.show()
 
