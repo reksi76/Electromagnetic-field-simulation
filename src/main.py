@@ -15,6 +15,7 @@ from simulation.state import ParticleState, Trajectory
 from simulation.particle_simulation import particle_sim
 from analysis.energy import compute_energy, energy_error
 from integrators.methods import euler_step, rk4_step, velocity_verlet_step
+from physics.accel_func import make_accel
 
 from visualization.visualize import (
         vis_charges,
@@ -45,6 +46,7 @@ charges = setup_charges()
 grid = setup_grid()
 field = electric_field(charges, k, grid)
 V_total = electrical_potential(field, charges, k, grid)
+accel = make_accel(field, grid, q, mode='Electrostatic')
 state = ParticleState(
         x = -4,
         y = 2,
@@ -86,7 +88,7 @@ if SHOW_PARTICLE_SIM:
     results = {}
     for name, method in integrators.items():
         particle_result = []
-        sim = particle_sim(method, replace(state), field, grid, q) # return traj dataclass
+        sim = particle_sim(method, replace(state), field, grid, q, N, dt) # return traj dataclass
         results[name]= sim
       
       # traj:

@@ -3,7 +3,8 @@ import os
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-import numpy as np
+import numpy as np 
+from dataclasses import replace
 from simulation.state import Trajectory
 from integrators.methods import (
         rk4_step, 
@@ -12,9 +13,10 @@ from integrators.methods import (
         )
 from physics.force import acceleration
 
-def particle_sim(step_function, state, field, grid, q):
-    dt = 0.002
-    N = 10000
+def particle_sim(
+        step_function, state, field, 
+        grid, q, N=10000, dt=0.002
+        ):
 
     traj = Trajectory(
             px_list = np.zeros(N),
@@ -24,7 +26,8 @@ def particle_sim(step_function, state, field, grid, q):
             )
     
     def accel(x, y):  
-        return acceleration(state, field, grid, q, field_mode='Electromagnetic')
+        temp_state = replace(state, x=x, y=y)
+        return acceleration(temp_state, field, grid, q, field_mode='Electromagnetic')
 
     for t in range(N):
         
