@@ -5,17 +5,15 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 import matplotlib.pyplot as plt 
 import numpy as np 
-from dataclasses import replace
 
 from physics.charges import setup_charges 
 from physics.fields import electric_field
 from physics.potential import  electrical_potential
 from physics.grid import setup_grid
 from simulation.state import ParticleState, Trajectory
-from simulation.particle_simulation import particle_sim
+from simulation.particle_simulation import make_accel, particle_sim
 from analysis.energy import compute_energy, energy_error
 from integrators.methods import euler_step, rk4_step, velocity_verlet_step
-from physics.accel_func import make_accel
 
 from visualization.visualize import (
         vis_charges,
@@ -88,7 +86,7 @@ if SHOW_PARTICLE_SIM:
     results = {}
     for name, method in integrators.items():
         particle_result = []
-        sim = particle_sim(method, replace(state), field, grid, q, N, dt) # return traj dataclass
+        sim = particle_sim(method, state, N=10000, dt=0.02) # return traj dataclass
         results[name]= sim
       
       # traj:

@@ -13,9 +13,16 @@ from integrators.methods import (
         )
 from physics.force import acceleration
 
+def make_accel(field, grid, q, mode):
+
+    def accel(state):
+        return acceleration(state, field, grid, q, mode)
+
+    return accel    
+
 def particle_sim(
-        step_function, state, field, 
-        grid, q, N=10000, dt=0.002
+        step_function, state,
+        accel, N, dt
         ):
 
     traj = Trajectory(
@@ -25,10 +32,6 @@ def particle_sim(
             vy_list = np.zeros(N),
             )
     
-    def accel(x, y):  
-        temp_state = replace(state, x=x, y=y)
-        return acceleration(temp_state, field, grid, q, field_mode='Electromagnetic')
-
     for t in range(N):
         
         # 3 Integrators: rk4_step, euler_step, velocity_verlet_step
