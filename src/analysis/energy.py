@@ -24,8 +24,8 @@ def compute_energy(traj, field, q, charges, k):
 
             V += (k * q_source) / r
             # Potential Energy
-            PE = q * V
-            energy_list[t] = KE + PE
+        PE = q * V
+        energy_list[t] = KE + PE
     
     return energy_list
 

@@ -52,11 +52,11 @@ state = ParticleState(
         vy = 0
         )
 
-SHOW_FIELD = False 
-SHOW_POTENTIAL = False 
+SHOW_FIELD = True 
+SHOW_POTENTIAL = True 
 SHOW_PARTICLE_SIM = True
-SHOW_ENERGY = False
-SHOW_ENERGY_ERROR = False
+SHOW_ENERGY = True
+SHOW_ENERGY_ERROR = True
 
 # Visualization
 if SHOW_FIELD:
@@ -85,8 +85,7 @@ if SHOW_PARTICLE_SIM:
     # particle_sim
     results = {}
     for name, method in integrators.items():
-        particle_result = []
-        sim = particle_sim(method, state, N=10000, dt=0.02) # return traj dataclass
+        sim = particle_sim(method, state, accel, N=10000, dt=0.02) # return traj dataclass
         results[name]= sim
       
       # traj:

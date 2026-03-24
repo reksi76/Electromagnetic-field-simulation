@@ -4,7 +4,6 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import numpy as np 
-from dataclasses import replace
 from simulation.state import Trajectory
 from integrators.methods import (
         rk4_step, 
@@ -32,7 +31,12 @@ def particle_sim(
             vy_list = np.zeros(N),
             )
     
-    for t in range(N):
+    traj.px_list[0] = state.x
+    traj.py_list[0] = state.y
+    traj.vx_list[0] = state.vx
+    traj.vy_list[0] = state.vy
+
+    for t in range(1, N):
         
         # 3 Integrators: rk4_step, euler_step, velocity_verlet_step
 
