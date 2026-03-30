@@ -14,6 +14,8 @@ from simulation.state import ParticleState, Trajectory
 from simulation.particle_simulation import make_accel, particle_sim
 from analysis.energy import compute_energy, energy_error
 from integrators.methods import euler_step, rk4_step, velocity_verlet_step
+from integrators.boris import boris_step
+
 
 from visualization.visualize import (
         vis_charges,
@@ -38,13 +40,19 @@ integrators = {
 
 # field:
 # field.Ex, field.Ey, field.epsilon
+
+# --- CONFIG ---
 q = 1.0
-k = 1 
+k = 1
+N = 10000
+dt = 0.02
+mode = 'Electromagnetic'
+
+# ---SETUP PHYSICS---
 charges = setup_charges()
 grid = setup_grid()
 field = electric_field(charges, k, grid)
 V_total = electrical_potential(field, charges, k, grid)
-accel = make_accel(field, grid, q, mode='Electrostatic')
 state = ParticleState(
         x = -4,
         y = 2,
@@ -52,11 +60,15 @@ state = ParticleState(
         vy = 0
         )
 
-SHOW_FIELD = True 
-SHOW_POTENTIAL = True 
-SHOW_PARTICLE_SIM = True
+SHOW_FIELD = False 
+SHOW_POTENTIAL = False 
+SHOW_PARTICLE_SIM = False
 SHOW_ENERGY = True
 SHOW_ENERGY_ERROR = True
+
+# --- CHOOSE SOLVER ---
+if mode == 'Electromagnetic':
+    integrators['Boris'] = boris_step(state, dt, field, grid, q, mode)
 
 # Visualization
 if SHOW_FIELD:
@@ -85,7 +97,12 @@ if SHOW_PARTICLE_SIM:
     # particle_sim
     results = {}
     for name, method in integrators.items():
-        sim = particle_sim(method, state, accel, N=10000, dt=0.02) # return traj dataclass
+
+        if name == 'Boris':
+            accel = None
+        else:
+            accel = make_accel(field, grid, q, mode)
+        sim = particle_sim(method, state, accel, N, dt) # return traj dataclass
         results[name]= sim
       
       # traj:
