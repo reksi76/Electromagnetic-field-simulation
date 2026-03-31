@@ -26,6 +26,11 @@ from visualization.visualize import (
         vis_energy_error
         )
 
+SHOW_FIELD = False 
+SHOW_POTENTIAL = False 
+SHOW_PARTICLE_SIM = True
+SHOW_ENERGY = False
+SHOW_ENERGY_ERROR = False
 
 integrators = {
         'Euler': euler_step, 
@@ -46,79 +51,71 @@ q = 1.0
 k = 1
 N = 10000
 dt = 0.02
-mode = 'Electromagnetic'
+mode = 'Electrostatic'
 
 # ---SETUP PHYSICS---
-charges = setup_charges()
-grid = setup_grid()
-field = electric_field(charges, k, grid)
-V_total = electrical_potential(field, charges, k, grid)
-state = ParticleState(
-        x = -4,
-        y = 2,
-        vx = 1.0, 
-        vy = 0
-        )
+def init_simulation():
+    charges = setup_charges()
+    grid = setup_grid()
+    field = electric_field(charges, k, grid)
+    V_total = electrical_potential(field, charges, k, grid)
+    state = ParticleState(
+            x = -4,
+            y = 2,
+            vx = 1.0, 
+            vy = 0
+            )
+    return charges, grid, field, V_total, state
 
-SHOW_FIELD = False 
-SHOW_POTENTIAL = False 
-SHOW_PARTICLE_SIM = False
-SHOW_ENERGY = True
-SHOW_ENERGY_ERROR = True
+charges, grid, field, V_total, state = init_simulation()
 
 # --- CHOOSE SOLVER ---
 if mode == 'Electromagnetic':
-    integrators['Boris'] = boris_step(state, dt, field, grid, q, mode)
+    integrators['Boris'] = boris_step
 
-# Visualization
-if SHOW_FIELD:
-    # Electrical field
-    fig, ax = plt.subplots(figsize= (6,4))
-    vis_electrical_field(ax, grid, field)
-    vis_charges(ax, charges)
-    ax.set_title('Electrical Field')
-    ax.set_xlabel('X')
-    ax.set_ylabel('Y')
-    ax.grid(True)
-
-# Electrical potential
-if SHOW_POTENTIAL:
-    fig, ax = plt.subplots(figsize=(6,4))
-
-    cf = vis_potential(ax, grid, field, V_total)
-    vis_charges(ax, charges)
-    ax.set_title('Electrical Potential')
-    ax.set_xlabel('X')
-    ax.set_ylabel('Y')
-    ax.grid(True)
-    fig.colorbar(cf, ax=ax)
-
-if SHOW_PARTICLE_SIM: 
+def run_all_integrators(integrators, state, field, grid, q, mode, N, dt):
     # particle_sim
     results = {}
     for name, method in integrators.items():
 
         if name == 'Boris':
             accel = None
+            step = lambda s, dt, a: boris_step(s, dt, field, grid, q, mode)
         else:
             accel = make_accel(field, grid, q, mode)
-        sim = particle_sim(method, state, accel, N, dt) # return traj dataclass
+            step = method
+
+        sim = particle_sim(step, state, accel, N, dt) # return traj dataclass
         results[name]= sim
       
       # traj:
     # traj.px_list, traj.py_list, traj.vx_list, traj.vy_list, traj.energy_list
-    
-    # Visualization
-    fig, ax = plt.subplots(figsize=(6, 6))
-    ani = vis_particle_sim(ax, results)
+    return results
 
+results = run_all_integrators(integrators, state, field, grid, q, mode, N, dt)
+
+if SHOW_FIELD:
+    # Electrical field
+    fig, ax = plt.subplots(figsize=(6,4))
+    vis_electrical_field(ax, grid, field)
+    vis_charges(ax, charges)
+
+# Electrical potential
+if SHOW_POTENTIAL:
+    fig, ax = plt.subplots(figsize=(6,4))
+    cf = vis_potential(ax, grid, field, V_total)
+    vis_charges(ax, charges)
+    fig.colorbar(cf, ax=ax)
+
+
+if SHOW_PARTICLE_SIM: 
+    # Visualization
+    fig, ax = plt.subplots(figsize=(6,6))
+    ani = vis_particle_sim(ax, results)
     vis_charges(ax, charges)
     ax.set_xlim(-5, 5)
-    ax.set_ylim(-5, 5)
-    ax.set_title(
-        r"Particle Motion in Electric Field: $ \vec{F}=q\vec{E}, \; \vec{a}=\frac{q\vec{E}}{m} $)"
-    )
-
+    ax.set_ylim(-5, 5) 
+    
 euler_energy = compute_energy(results['Euler'], field, q, charges, k)
 rk4_energy = compute_energy(results['RK4'], field, q, charges, k)
 velocity_verlet_energy = compute_energy(results['Velocity Verlet'], field, q, charges, k)

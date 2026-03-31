@@ -14,14 +14,28 @@ def vis_charges(ax, charges):
             ax.text(x0, y0, '+', color='white', ha='center', va='center', fontsize=14, weight='bold')
 
 def vis_electrical_field(ax, grid, field):
+    ax.set_title('Electrical Field')
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.grid(True)
     ax.streamplot(grid.x, grid.y, field.Ex, field.Ey, color='blue')
 
 def vis_potential(ax, grid, field, V_total):
     ax.streamplot(grid.X, grid.Y, field.Ex, field.Ey, color='blue', density=1.5)
+    ax.set_title('Electrical Potential')
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.grid(True)
+
     cf = ax.contourf(grid.X, grid.Y, V_total, cmap='inferno', alpha=0.8)
-    return cf 
 
 def vis_particle_sim(ax, trajectories):
+    ax.set_xlim(-5, 5)
+    ax.set_ylim(-5, 5)
+    ax.set_title(
+        r"Particle Motion in Electric Field: $ \vec{F}=q\vec{E}, \; \vec{a}=\frac{q\vec{E}}{m} $)"
+    )
+    
     fig = ax.figure
     ax.set_aspect('equal')
 
