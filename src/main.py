@@ -28,9 +28,9 @@ from visualization.visualize import (
 
 SHOW_FIELD = False 
 SHOW_POTENTIAL = False 
-SHOW_PARTICLE_SIM = True
-SHOW_ENERGY = False
-SHOW_ENERGY_ERROR = False
+SHOW_PARTICLE_SIM = False
+SHOW_ENERGY = True
+SHOW_ENERGY_ERROR = True
 
 integrators = {
         'Euler': euler_step, 
@@ -51,7 +51,7 @@ q = 1.0
 k = 1
 N = 10000
 dt = 0.02
-mode = 'Electrostatic'
+mode = 'Electromagnetic'
 
 # ---SETUP PHYSICS---
 def init_simulation():
@@ -105,39 +105,45 @@ if SHOW_POTENTIAL:
     fig, ax = plt.subplots(figsize=(6,4))
     cf = vis_potential(ax, grid, field, V_total)
     vis_charges(ax, charges)
-    fig.colorbar(cf, ax=ax)
 
 
 if SHOW_PARTICLE_SIM: 
     # Visualization
     fig, ax = plt.subplots(figsize=(6,6))
+    
     ani = vis_particle_sim(ax, results)
     vis_charges(ax, charges)
-    ax.set_xlim(-5, 5)
-    ax.set_ylim(-5, 5) 
-    
-euler_energy = compute_energy(results['Euler'], field, q, charges, k)
-rk4_energy = compute_energy(results['RK4'], field, q, charges, k)
-velocity_verlet_energy = compute_energy(results['Velocity Verlet'], field, q, charges, k)
+
+def energy_func(results, field, q, charges, k, mode):
+    if mode == 'Electromagnetic':
+        selected = {'Boris' : results['Boris']}
+    else:
+        selected = results
+
+    energies = {
+            name: compute_energy(res, field, q, charges, k)
+            for name, res in selected.items() 
+            }
+
+    energy_errors = {
+            name: energy_error(energy)
+            for name, energy in energies.items()
+            }
+    return energies, energy_errors
+
+energies, energy_errors = energy_func(results, field, q, charges, k, mode)
 
 if SHOW_ENERGY:
     # Energy calculation
     fig, ax = plt.subplots(figsize=(6,4))
-    vis_energy(ax, euler_energy, label='Euler')
-    vis_energy(ax, rk4_energy, label='RK4')
-    vis_energy(ax, velocity_verlet_energy, label='Velocity Verlet ')
+    for name, energy in energies.items():
+        vis_energy(ax, energy, label=name)
 
-    
 # Energy energy_error
 if SHOW_ENERGY_ERROR:
     fig, ax = plt.subplots(figsize=(6,4))
-    euler_error = energy_error(euler_energy)
-    rk4_error = energy_error(rk4_energy)
-    velocity_verlet_error = energy_error(velocity_verlet_energy)
-    vis_energy_error(ax, euler_error, label='Euler')
-    vis_energy_error(ax, rk4_error, label='RK4')
-    vis_energy_error(ax, velocity_verlet_error, label='Velocity Verlet')
-
+    for name, energy_error in energy_errors.items():
+        vis_energy_error(ax, energy_error, label=name)
 
 plt.show()
 
