@@ -3,11 +3,9 @@ from simulation.state import ParticleState
 
 def boris_step(state, dt, field, grid, q, mode):
 
-    # posisi
     x, y = state.x, state.y
     vx, vy = state.vx, state.vy
 
-    # ambil field lokal (sama seperti acceleration)
     ix = np.argmin(abs(grid.x - x))
     iy = np.argmin(abs(grid.y - y))
 

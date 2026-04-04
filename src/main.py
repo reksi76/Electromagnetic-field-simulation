@@ -28,7 +28,7 @@ from visualization.visualize import (
 
 SHOW_FIELD = False 
 SHOW_POTENTIAL = False 
-SHOW_PARTICLE_SIM = False
+SHOW_PARTICLE_SIM = True
 SHOW_ENERGY = True
 SHOW_ENERGY_ERROR = True
 
@@ -50,7 +50,7 @@ integrators = {
 q = 1.0
 k = 1
 N = 10000
-dt = 0.02
+dt = 0.002
 mode = 'Electromagnetic'
 
 # ---SETUP PHYSICS---
@@ -113,6 +113,11 @@ if SHOW_PARTICLE_SIM:
     
     ani = vis_particle_sim(ax, results)
     vis_charges(ax, charges)
+    ax.set_xlim(-5, 5)
+    ax.set_ylim(-5, 5)
+    ax.set_title(
+            r'Particle motion in electrical field: $ \vec{F}= q\vec{E}, \; \vec{a}=\frac{q/vec{E}}{m} $')
+
 
 def energy_func(results, field, q, charges, k, mode):
     if mode == 'Electromagnetic':
