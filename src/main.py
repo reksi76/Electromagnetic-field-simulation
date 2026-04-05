@@ -47,7 +47,6 @@ integrators = {
 # field.Ex, field.Ey, field.epsilon
 
 # --- CONFIG ---
-q = 1.0
 k = 1
 N = 10000
 dt = 0.002
@@ -59,23 +58,24 @@ def init_simulation():
     grid = setup_grid()
     field = electric_field(charges, k, grid)
     V_total = electrical_potential(field, charges, k, grid)
-    state = ParticleState(
-            x = -4,
-            y = 2,
-            vx = 1.0, 
-            vy = 0
-            )
-    return charges, grid, field, V_total, state
+    particles = [
+            ParticleState(x = -4, y = 2, vx = 1.0, vy = 0, q = 1),
+            ParticleState(x = 4, y = 2, vx = -1.0, vy = 0, q = -1)
+            ]
 
-charges, grid, field, V_total, state = init_simulation()
+    return charges, grid, field, V_total, particles
+
+charges, grid, field, V_total, particles = init_simulation()
+q  = [p.q for p in particles]
 
 # --- CHOOSE SOLVER ---
 if mode == 'Electromagnetic':
     integrators['Boris'] = boris_step
 
-def run_all_integrators(integrators, state, field, grid, q, mode, N, dt):
+def run_all_integrators(integrators, particles, field, grid, q, mode, N, dt):
     # particle_sim
     results = {}
+    sims = []
     for name, method in integrators.items():
 
         if name == 'Boris':
@@ -84,9 +84,11 @@ def run_all_integrators(integrators, state, field, grid, q, mode, N, dt):
         else:
             accel = make_accel(field, grid, q, mode)
             step = method
-
-        sim = particle_sim(step, state, accel, N, dt) # return traj dataclass
-        results[name]= sim
+        
+        for p in particles:
+            sim = particle_sim(step, p, acce;, N, dt) # return traj dataclass
+            sim.append(sims)
+        results[name]= sims
       
       # traj:
     # traj.px_list, traj.py_list, traj.vx_list, traj.vy_list, traj.energy_list
