@@ -12,10 +12,10 @@ from integrators.methods import (
         )
 from physics.force import acceleration
 
-def make_accel(field, grid, q, mode):
+def make_accel(field, grid, state, mode):
 
     def accel(state):
-        return acceleration(state, field, grid, q, mode)
+        return acceleration(state, field, grid, mode)
 
     return accel    
 
@@ -29,6 +29,7 @@ def particle_sim(
             py_list = np.zeros(N),
             vx_list = np.zeros(N),
             vy_list = np.zeros(N),
+            q = state.q
             )
     
     traj.px_list[0] = state.x

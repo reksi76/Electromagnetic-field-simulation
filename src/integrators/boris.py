@@ -39,11 +39,11 @@ def boris_step(state, dt, field, grid, q, mode):
     # --- Boris algorithm ---
 
     # half acceleration by E
-    vx_minus = vx + q * Ex * dt / 2
-    vy_minus = vy + q * Ey * dt / 2
+    vx_minus = vx + state.q * Ex * dt / 2
+    vy_minus = vy + state.q * Ey * dt / 2
 
     # rotation due to B
-    t = q * Bz * dt / 2
+    t = state.q * Bz * dt / 2
     s = 2 * t / (1 + t**2)
 
     # rotate velocity
@@ -54,11 +54,11 @@ def boris_step(state, dt, field, grid, q, mode):
     vy_plus = vy_minus - v_prime_x * s
 
     # second half E
-    vx_new = vx_plus + q * Ex * dt / 2
-    vy_new = vy_plus + q * Ey * dt / 2
+    vx_new = vx_plus + state.q * Ex * dt / 2
+    vy_new = vy_plus + state.q * Ey * dt / 2
 
     # update posisi
     x_new = x + vx_new * dt
     y_new = y + vy_new * dt
 
-    return ParticleState(x_new, y_new, vx_new, vy_new)
+    return ParticleState(x_new, y_new, vx_new, vy_new, state.q)

@@ -66,7 +66,7 @@ def init_simulation():
     return charges, grid, field, V_total, particles
 
 charges, grid, field, V_total, particles = init_simulation()
-q  = [p.q for p in particles]
+q  = [state.q for state in particles]
 
 # --- CHOOSE SOLVER ---
 if mode == 'Electromagnetic':
@@ -85,16 +85,16 @@ def run_all_integrators(integrators, particles, field, grid, q, mode, N, dt):
             accel = make_accel(field, grid, q, mode)
             step = method
         
-        for p in particles:
-            sim = particle_sim(step, p, acce;, N, dt) # return traj dataclass
-            sim.append(sims)
+        for state in particles:
+            sim = particle_sim(step, state, accel, N, dt) # return traj dataclass
+            sims.append(sim)
         results[name]= sims
       
       # traj:
-    # traj.px_list, traj.py_list, traj.vx_list, traj.vy_list, traj.energy_list
+    # traj.px_list, traj.py_list, traj.vx_list, traj.vy_list
     return results
 
-results = run_all_integrators(integrators, state, field, grid, q, mode, N, dt)
+results = run_all_integrators(integrators, particles, field, grid, q, mode, N, dt)
 
 if SHOW_FIELD:
     # Electrical field

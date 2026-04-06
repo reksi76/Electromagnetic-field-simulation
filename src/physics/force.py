@@ -2,7 +2,7 @@ import numpy as np
 
 # Lorentz Law:
 # F = q(E + v x B)
-def acceleration(state, field, grid, q, field_mode):
+def acceleration(state, field, grid, field_mode):
 
     ix = np.argmin(abs(grid.x - state.x))
     iy = np.argmin(abs(grid.y - state.y))
@@ -38,7 +38,7 @@ def acceleration(state, field, grid, q, field_mode):
     # ax = q/m * (Ex - vy x Bz)
     # ay = q/m * (Ey + vx x Bz)
     # m = 1
-    ax = q * (Ex + state.vy * Bz)
-    ay = q * (Ey - state.vx * Bz)
+    ax = state.q * (Ex + state.vy * Bz)
+    ay = state.q * (Ey - state.vx * Bz)
 
     return ax, ay

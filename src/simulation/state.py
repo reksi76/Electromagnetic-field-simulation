@@ -7,6 +7,7 @@ class ParticleState:
     y: float
     vx: float
     vy: float
+    q: float
 
 @dataclass
 class Trajectory:
@@ -14,4 +15,5 @@ class Trajectory:
     py_list: np.ndarray
     vx_list: np.ndarray
     vy_list: np.ndarray
+    q: float
 

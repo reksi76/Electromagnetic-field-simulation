@@ -15,7 +15,7 @@ def euler_step(state, dt, acceleration):
     px_new = state.x + state.vx * dt
     py_new = state.y + state.vy * dt
 
-    return ParticleState(px_new, py_new, vx_new, vy_new) 
+    return ParticleState(px_new, py_new, vx_new, vy_new, state.q) 
 
 def rk4_step(state, dt, acceleration):
     # K1
@@ -29,6 +29,7 @@ def rk4_step(state, dt, acceleration):
             state.y  + 0.5 * k1_py,
             state.vx + 0.5 * k1_vx,
             state.vy + 0.5 * k1_vy,
+            state.q
             )
     ax2, ay2 = acceleration(s2)
     k2_vx, k2_vy = ax2 * dt, ay2 * dt
@@ -40,6 +41,7 @@ def rk4_step(state, dt, acceleration):
             state.y + 0.5 * k2_py,
             state.vx + 0.5 * k2_vx,
             state.vy + 0.5 * k2_vy,
+            state.q
             )
     ax3, ay3 = acceleration(s3)
     k3_vx, k3_vy = ax3 * dt, ay3 * dt
@@ -50,7 +52,8 @@ def rk4_step(state, dt, acceleration):
             state.x + k3_px, 
             state.y + k3_py,
             state.vx + k3_vx,
-            state.vy + k3_vy
+            state.vy + k3_vy,
+            state.q
             )
     ax4, ay4 = acceleration(s4)
     k4_vx, k4_vy = ax4 * dt, ay4 * dt
@@ -61,7 +64,7 @@ def rk4_step(state, dt, acceleration):
     vx_new = state.vx + 1/6 * (k1_vx + 2 * k2_vx + 2 * k3_vx + k4_vx)
     vy_new = state.vy + 1/6 * (k1_vy + 2 * k2_vy + 2 * k3_vy + k4_vy)
 
-    return ParticleState(px_new, py_new, vx_new, vy_new) 
+    return ParticleState(px_new, py_new, vx_new, vy_new, state.q) 
 
 def velocity_verlet_step(state, dt, acceleration):
     ax, ay = acceleration(state)
@@ -69,10 +72,10 @@ def velocity_verlet_step(state, dt, acceleration):
     px_new = state.x + state.vx * dt + 0.5 * ax * dt**2
     py_new = state.y + state.vy * dt + 0.5 * ay * dt**2
 
-    temp_state = ParticleState(px_new, py_new, state.vx, state.vy)
+    temp_state = ParticleState(px_new, py_new, state.vx, state.vy, state.q)
     ax_new, ay_new = acceleration(temp_state)
 
     vx_new = state.vx + 0.5 * (ax + ax_new) * dt
     vy_new = state.vy + 0.5 * (ay + ay_new) * dt
 
-    return ParticleState(px_new, py_new, vx_new, vy_new)
+    return ParticleState(px_new, py_new, vx_new, vy_new, state.q)
