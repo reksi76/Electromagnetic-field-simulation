@@ -55,18 +55,22 @@ def vis_particle_sim(ax, trajectories):
     dots = [] 
     trails = []
     traj_refs = []
-    colors = ['orange', 'cyan', 'green', 'red', 'purple']
+    colors = {'Euler':'orange', 'RK4':'cyan', 'Velocity Verlet':'green', 'Boris':'red'}
 
     for i, (method_name, traj_list) in enumerate(trajectories.items()):
-        color = colors[i % len(colors)]
+        # color = colors[i % len(colors)]
         for traj in traj_list:
-            dot, = ax.plot([], [], 'o', color= colors[i], label=method_name)
-            trail, = ax.plot([], [], '-', color=colors[i], label='_nolegend_')
+            dot, = ax.plot([], [], 'o', color= colors[method_name])
+            trail, = ax.plot([], [], '-', color=colors[method_name], label='_nolegend_')
             dots.append(dot)
             trails.append(trail)
             traj_refs.append(traj)
             
-            ax.plot([], [], color=colors[i % len(colors)], label=method_name)
+            ax.plot([], [], color=colors[method_name], label=method_name)
+
+        for method_name, color in colors.items():
+            ax.plot([], [], color=color, label=method_name)
+
     ax.legend()
 
     

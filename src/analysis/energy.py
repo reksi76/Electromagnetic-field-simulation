@@ -3,7 +3,7 @@ import numpy  as np
 # Energy calculation (E = 1/2 * m * v^2 + q * V)
 def compute_energy(trajectories, field, q, charges, k):
     for traj in trajectories:
-        print(traj)
+        # print(traj)
         qi = traj.q
         N = len(traj.px_list)
         energy_list = np.zeros(N)
@@ -34,15 +34,19 @@ def compute_energy(trajectories, field, q, charges, k):
     return all_energies
 
 def energy_error(energy_list):
+    all_errors = []
+
     for energy in energy_list:
-        E0 = energy_list[0]
+        E0 = energy[0]
+
         if abs(E0) < 1e-12:
-            return np.zeros_like(energy_list)
-        energy_list = np.array(energy_list)
+            error = np.zeros_like(energy)
+        else:
+            error = (energy - E0) / E0
 
-        error = (energy_list - E0) / E0
+        all_errors.append(error)
 
-        return error
+        return all_errors
 
 
 
