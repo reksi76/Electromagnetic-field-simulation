@@ -143,14 +143,16 @@ energies, energy_errors = energy_func(results, field, q, charges, k, mode)
 if SHOW_ENERGY:
     # Energy calculation
     fig, ax = plt.subplots(figsize=(6,4))
-    for name, energy in energies.items():
-        vis_energy(ax, energy, label=name)
+    for name, energy_list in energies.items():
+        vis_energy(ax, energy_list, label=name)
+    ax.legend()
 
 # Energy energy_error
 if SHOW_ENERGY_ERROR:
     fig, ax = plt.subplots(figsize=(6,4))
-    for name, energy_error in energy_errors.items():
-        vis_energy_error(ax, energy_error, label=name)
+    for name, error_list in energy_errors.items():
+        vis_energy_error(ax, error_list, label=name)
+    ax.legend()
 
 plt.show()
 

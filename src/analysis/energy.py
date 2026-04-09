@@ -46,7 +46,7 @@ def energy_error(energy_list):
 
         all_errors.append(error)
 
-        return all_errors
+    return all_errors
 
 
 

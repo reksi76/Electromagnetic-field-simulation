@@ -46,7 +46,7 @@ def vis_particle_sim(ax, trajectories):
     ax.set_xlim(x_center - max_range/2, x_center + max_range/2)
     ax.set_ylim(y_center - max_range/2, y_center + max_range/2)     
     ax.set_title(
-        r"Particle Motion in Electric Field: $ \vec{F}=q\vec{E}, \; \vec{a}=\frac{q\vec{E}}{m} $)"
+        r"Particle Motion in Electric Field: $ \vec{F}=q\vec{E}, \; \vec{a}=\frac{q\vec{E}}{m} $"
     )
     fig = ax.figure
     ax.set_aspect('equal')
@@ -66,10 +66,8 @@ def vis_particle_sim(ax, trajectories):
             trails.append(trail)
             traj_refs.append(traj)
             
-            ax.plot([], [], color=colors[method_name], label=method_name)
-
-        for method_name, color in colors.items():
-            ax.plot([], [], color=color, label=method_name)
+    for method_name, color in colors.items():
+        ax.plot([], [], color=color, label=method_name)
 
     ax.legend()
 
@@ -79,8 +77,8 @@ def vis_particle_sim(ax, trajectories):
     def update(frame_idx):
         idx = indices[frame_idx]
 
-        for i, traj in enumerate(trajectories.values()):
-            dots[i].set_data(traj.px_list[dx], traj.py_list[dx])
+        for i, traj in enumerate(traj_refs):
+            dots[i].set_data(traj.px_list[idx], traj.py_list[idx])
             trails[i].set_data(traj.px_list[:idx], traj.py_list[:idx])
 
         return dots + trails 
@@ -95,16 +93,26 @@ def vis_particle_sim(ax, trajectories):
 
     return ani
 
-def vis_energy(ax, energy, label):
-    ax.plot(energy, label=f'{label} Integrator Energy')
+def vis_energy(ax, energy_list, label):
+    for i, energy in enumerate(energy_list):
+        if i == 0:
+            ax.plot(energy, label=f'{label} Integrator Energy')
+        else:
+            ax.plot(energy)
+
     ax.set_xlabel('Time step')
     ax.set_ylabel('Energy')
     ax.set_title('Energy vs Time')
     ax.legend()
     ax.grid(True)
 
-def vis_energy_error(ax, error, label):
-    ax.plot(error, label=f'{label} Error')
+def vis_energy_error(ax, error_list, label):
+    for i, err in enumerate(error_list):
+        if i == 0:
+            ax.plot(err, label=f'{label} Error')
+        else:
+            ax.plot(err)
+
     ax.set_title('Energy Error')
     ax.set_xlabel("Time step")
     ax.set_ylabel("Relative Energy Error")
