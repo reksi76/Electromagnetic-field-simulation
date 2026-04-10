@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.animation import FuncAnimation
+from matplotlib.animation import PillowWriter
 
 def vis_charges(ax, charges):
     for charge in charges:
@@ -29,7 +30,7 @@ def vis_potential(ax, grid, field, V_total):
 
     cf = ax.contourf(grid.X, grid.Y, V_total, cmap='inferno', alpha=0.8)
 
-def vis_particle_sim(ax, trajectories):
+def vis_particle_sim(ax, charges, trajectories):
     # print(trajectories)
     all_traj = [traj for traj_list in trajectories.values() for traj in traj_list]
     
@@ -45,9 +46,12 @@ def vis_particle_sim(ax, trajectories):
 
     ax.set_xlim(x_center - max_range/2, x_center + max_range/2)
     ax.set_ylim(y_center - max_range/2, y_center + max_range/2)     
+    ax.set_aspect('equal')
     ax.set_title(
         r"Particle Motion in Electric Field: $ \vec{F}=q\vec{E}, \; \vec{a}=\frac{q\vec{E}}{m} $"
-    )
+        )
+
+    vis_charges(ax, charges)
     fig = ax.figure
     ax.set_aspect('equal')
     frame_skip = 10
@@ -89,7 +93,7 @@ def vis_particle_sim(ax, trajectories):
             frames = len(indices), 
             interval = 10
             )
-    # ani.save('../plots/particle_simulation.gif', writer='pillow', fps=40)
+    ani.save('../plots/particle_simulation.gif', writer='pillow', fps=40)
 
     return ani
 

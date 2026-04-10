@@ -113,13 +113,10 @@ if SHOW_PARTICLE_SIM:
     # Visualization
     fig, ax = plt.subplots(figsize=(6,6))
     
-    ani = vis_particle_sim(ax, results)
+    ani = vis_particle_sim(ax, charges, results)
     vis_charges(ax, charges)
     ax.set_xlim(-5, 5)
     ax.set_ylim(-5, 5)
-    ax.set_title(
-            r'Particle motion in electrical field: $ \vec{F}= q\vec{E}, \; \vec{a}=\frac{q/vec{E}}{m} $')
-
 
 def energy_func(results, field, q, charges, k, mode):
     if mode == 'Electromagnetic':
