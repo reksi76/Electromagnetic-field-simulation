@@ -80,13 +80,13 @@ def run_all_integrators(integrators, particles, field, grid, q, mode, N, dt):
 
         if name == 'Boris':
             accel = None
-            step = lambda s, dt, a: boris_step(s, dt, field, grid, q, mode)
+            step_fuction = lambda s, dt, a: boris_step(s, dt, field, grid, q, mode)
         else:
             accel = make_accel(field, grid, q, mode)
-            step = method
+            step_fuction = method
         
         for state in particles:
-            sim = particle_sim(step, state, accel, N, dt) # return traj dataclass
+            sim = particle_sim(step_fuction, state, accel, N, dt) # return traj dataclass
             sims.append(sim)
         results[name]= sims
       
@@ -125,8 +125,8 @@ def energy_func(results, field, q, charges, k, mode):
         selected = results
 
     energies = {
-            name: compute_energy(res, field, q, charges, k)
-            for name, res in selected.items() 
+            name: compute_energy(trajectories, field, q, charges, k) 
+            for name, trajectories in selected.items() 
             }
 
     energy_errors = {
