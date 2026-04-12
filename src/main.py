@@ -50,11 +50,14 @@ integrators = {
 k = 1
 N = 10000
 dt = 0.002
-mode = 'Electromagnetic'
+# Electrostatic, Magnetic_only, Electric_const, Electromagnetic
+mode = 'Magnetic_only'
+# dipole, asymetric_dipole, multi_source, perturbed, 
+config = 'dipole'
 
 # ---SETUP PHYSICS---
 def init_simulation():
-    charges = setup_charges()
+    charges = setup_charges(config)
     grid = setup_grid()
     field = electric_field(charges, k, grid)
     V_total = electrical_potential(field, charges, k, grid)

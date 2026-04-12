@@ -34,7 +34,9 @@ def boris_step(state, dt, field, grid, q, mode):
         Bz = B0
 
     else:
-        raise ValueError("Unknown mode")
+        raise ValueError(
+                f"Unknown mode: {mode}"
+                'Available mode: Electrostatic, Electromagnetic, Magnetic_only, Electric_const')
 
     # --- Boris algorithm ---
 

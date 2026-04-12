@@ -33,7 +33,9 @@ def acceleration(state, field, grid, field_mode):
         Bz = B0
     
     else:
-        raise ValueError('Unknown Value_mode')
+        raise ValueError(
+                f'Unknown Value_mode: {field_mode}'
+                'Available Value_mode: Electromagnetic, Electrostatic, Magnetic_only, Electric_const')
 
     # ax = q/m * (Ex - vy x Bz)
     # ay = q/m * (Ey + vx x Bz)

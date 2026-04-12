@@ -93,7 +93,7 @@ def vis_particle_sim(ax, charges, trajectories):
             frames = len(indices), 
             interval = 10
             )
-    ani.save('../plots/particle_simulation.gif', writer='pillow', fps=40)
+    # ani.save('../plots/particle_simulation.gif', writer='pillow', fps=40)
 
     return ani
 

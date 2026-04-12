@@ -10,10 +10,10 @@ $$
 
 where:
 
-* \( q \) is the charge
-* \( k \) is Coulomb's constant
-* \( \mathbf{r}_i \) is the position of the charge
-* \( \mathbf{r} \) is the observation point
+* $q$ is the charge
+* $k$ is Coulomb's constant
+* $\mathbf{r}_i$ is the position of the charge
+* $\mathbf{r}$ is the observation point
 
 For multiple charges, the total electric field is obtained using the superposition principle:
 
@@ -47,8 +47,8 @@ $$
 
 ## 3. Regularization of Singularities
 
-At \( \mathbf{r} = \mathbf{r}_i \), the electric field becomes singular.
-To avoid numerical divergence, a small parameter \( \epsilon \) is introduced:
+At $\mathbf{r} = \mathbf{r}_i$ the electric field becomes singular.
+To avoid numerical divergence, a small parameter $\epsilon$ is introduced:
 
 $$
 r = \sqrt{dx^2 + dy^2 + \epsilon^2}
@@ -146,16 +146,19 @@ It is a symplectic method that preserves energy and provides stable trajectories
 The total energy of the system consists of:
 
 * Kinetic energy:
-  $$
-  K = \frac{1}{2} m v^2
-  $$
+
+$$
+K = \frac{1}{2} m v^2
+$$
 
 * Electric potential energy:
-  $$
-  U = qV
-  $$
+
+$$
+U = qV
+$$
 
 Total energy:
+
 $$
 E = K + U
 $$
