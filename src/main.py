@@ -51,9 +51,9 @@ k = 1
 N = 10000
 dt = 0.002
 # Electrostatic, Magnetic_only, Electric_const, Electromagnetic
-mode = 'Magnetic_only'
+mode = 'Electromagnetic'
 # dipole, asymetric_dipole, multi_source, perturbed, 
-config = 'dipole'
+config = 'multi_source'
 
 # ---SETUP PHYSICS---
 def init_simulation():

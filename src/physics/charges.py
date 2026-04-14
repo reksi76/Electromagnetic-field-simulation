@@ -1,20 +1,20 @@
 def setup_charges(config):
-    if charges == 'dipole':
+    if config == 'dipole':
 
         charges = [
                 {'q' : -1.0, 'pos' : (-1.0, 0)},
                 {'q' : 1.0, 'pos' : (1.0, 0)}
                 ]
-    if config == 'asymetric_dipole':
+    elif config == 'asymetric_dipole':
         charges = [
                 {'q' : -1, 'pos' : (-1, 0)},
                 {'q' : 1, 'pos' : (2, 0.5)}
                 ]
-    if config == 'multi_source':
+    elif config == 'multi_source':
         charges = [
-                {'q' : -1, 'pos' = (-1, 0)},
-                {'q' : 1, 'pos' = (1, 0)},
-                {'q' : 1, 'pos' = (0, 1.5)},
+                {'q' : -1, 'pos' : (-1, 0)},
+                {'q' : 1, 'pos' : (1, 0)},
+                {'q' : 1, 'pos' : (0, 1.5)},
                 ]
 
     elif config == 'perturbed':
