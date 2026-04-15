@@ -15,6 +15,7 @@ from simulation.particle_simulation import make_accel, particle_sim
 from analysis.energy import compute_energy, energy_error
 from integrators.methods import euler_step, rk4_step, velocity_verlet_step
 from integrators.boris import boris_step
+from experiment.experiment_runner import run experiment
 
 
 from visualization.visualize import (
@@ -31,6 +32,7 @@ SHOW_POTENTIAL = False
 SHOW_PARTICLE_SIM = True
 SHOW_ENERGY = True
 SHOW_ENERGY_ERROR = True
+RUN_EXPERIMENT = True
 
 integrators = {
         'Euler': euler_step, 
@@ -156,3 +158,16 @@ if SHOW_ENERGY_ERROR:
 
 plt.show()
 
+
+if RUN_EXPERIMENT:
+    summary = run_experiment(
+            init_simulation, 
+            run_all_integrators, 
+            energy_func,
+            integrators,
+            config='perturbed',
+            dt_list=[0.01, 0.05, 0.02, 0,001],
+            integrator_names=['RK4', ['velocity_verlet_step, Boris']]
+            N = 10000mode=Electromagnetic
+            k = 1
+            )
