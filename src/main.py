@@ -15,8 +15,7 @@ from simulation.particle_simulation import make_accel, particle_sim
 from analysis.energy import compute_energy, energy_error
 from integrators.methods import euler_step, rk4_step, velocity_verlet_step
 from integrators.boris import boris_step
-from experiment.experiment_runner import run experiment
-
+from experiment.experiment_runner import run_experiment
 
 from visualization.visualize import (
         vis_charges,
@@ -29,9 +28,9 @@ from visualization.visualize import (
 
 SHOW_FIELD = False 
 SHOW_POTENTIAL = False 
-SHOW_PARTICLE_SIM = True
-SHOW_ENERGY = True
-SHOW_ENERGY_ERROR = True
+SHOW_PARTICLE_SIM = False
+SHOW_ENERGY = False
+SHOW_ENERGY_ERROR = False
 RUN_EXPERIMENT = True
 
 integrators = {
@@ -58,7 +57,7 @@ mode = 'Electromagnetic'
 config = 'multi_source'
 
 # ---SETUP PHYSICS---
-def init_simulation():
+def init_simulation(config):
     charges = setup_charges(config)
     grid = setup_grid()
     field = electric_field(charges, k, grid)
@@ -70,7 +69,7 @@ def init_simulation():
 
     return charges, grid, field, V_total, particles
 
-charges, grid, field, V_total, particles = init_simulation()
+charges, grid, field, V_total, particles = init_simulation(config)
 q  = [state.q for state in particles]
 
 # --- CHOOSE SOLVER ---
@@ -166,8 +165,14 @@ if RUN_EXPERIMENT:
             energy_func,
             integrators,
             config='perturbed',
-            dt_list=[0.01, 0.05, 0.02, 0,001],
-            integrator_names=['RK4', ['velocity_verlet_step, Boris']]
-            N = 10000mode=Electromagnetic
+            dt_list=[0.01, 0.05, 0.02, 0.001],
+            integrators_names=['RK4', 'Velocity Verlet', "Boris"],
+            N = 10000,
+            mode='Electromagnetic',
             k = 1
             )
+
+    for dt, data in summary.items():
+        print(f'\ndt = {dt}')
+        for method, stats in data.items():
+            print(f"{method}: max = {stats['max_error']:.4f},mean = {stats['mean_error']:4f}")
